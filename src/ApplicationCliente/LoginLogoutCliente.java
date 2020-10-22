@@ -5,14 +5,11 @@
  */
 package ApplicationCliente;
 
+import ApplicationCliente.controller.LoginController;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -23,13 +20,18 @@ public class LoginLogoutCliente extends Application {
     public static Stage stage;
     @Override
     public void start(Stage stage) throws Exception {
-        this.stage=stage;
         Parent root = FXMLLoader.load(getClass().getResource("fxml/LOGIN.fxml"));
         Scene scene = new Scene(root);
-        stage.setScene(scene);
+        stage.setScene(scene); 
         stage.setResizable(false);
         stage.show();
+      /*  FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LOGIN.fxml"));
+        Parent root = (Parent) loader.load();
         
+        LoginController controller = loader.getController();
+        controller.initStage(root);
+        
+        */
     /**
      * @param args the command line arguments
      */
