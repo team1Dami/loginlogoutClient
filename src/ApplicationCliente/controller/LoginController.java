@@ -5,9 +5,14 @@
  */
 package ApplicationCliente.controller;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 import static javafx.application.ConditionalFeature.FXML;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,7 +23,10 @@ import javafx.stage.Stage;
  *
  * @author rubir
  */
-public class LoginController extends ApplicationCliente.LoginLogoutCliente{
+public class LoginController implements Initializable{
+    
+    @FXML
+    private Stage stage;
     
     @FXML
         private Button btnLogin;
@@ -30,15 +38,20 @@ public class LoginController extends ApplicationCliente.LoginLogoutCliente{
         private TextField tfPasswd;
     
     
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
     
-    public void initStage(Parent root) {
+    
+    public void initStage(Parent root) {        
         Scene scene = new Scene(root);
-        stage.setScene(scene);
+        stage.setScene(scene); 
         stage.setResizable(false);
         stage.show();
     }
-
-    public void setStage(Stage stage) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // TODO
     }
 }
