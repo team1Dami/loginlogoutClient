@@ -6,6 +6,7 @@
 package ApplicationCliente;
 
 import ApplicationCliente.controller.LoginController;
+import ApplicationCliente.controller.LogoutController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,36 +15,29 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author eneko
+ * @author Ruben
  */
 public class LoginLogoutCliente extends Application {
-    public static Stage stage;
+    
     @Override
     public void start(Stage stage) throws Exception {
-       /*Parent root = FXMLLoader.load(getClass().getResource("fxml/LOGIN.fxml"));
-        Scene scene = new Scene(root);
-        stage.setScene(scene); 
-        stage.setResizable(false);
-        stage.show();*/
         
         LoginController controller = new LoginController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LOGIN.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Login.fxml"));
         Parent root = (Parent) loader.load();
         
         controller = (loader.getController());
         controller.setStage(stage);
         controller.initStage(root);
         
-        /*FXMLLoader loader = new FXMLLoader(getClass().getResource("Spinner.fxml"));
+        /*LogoutController controller = new LogoutController();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/logout.fxml"));
         Parent root = (Parent) loader.load();
         
-        LoginController controller = (LoginController) loader.getController();
-        
-        
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();*/
-    }
+        controller = (loader.getController());
+        controller.setStage(stage);
+        controller.initStage(root);*/
+        }
         
         
     /**
