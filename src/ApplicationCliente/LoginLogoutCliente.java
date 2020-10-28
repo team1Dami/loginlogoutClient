@@ -5,8 +5,12 @@
  */
 package ApplicationCliente;
 
-import ApplicationCliente.controller.LoginController;
-import ApplicationCliente.controller.LogoutController;
+import ApplicationCliente.Controller.LoginController;
+import ApplicationCliente.Controller.LogoutController;
+import Implementacion.Factoria;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,24 +23,36 @@ import javafx.stage.Stage;
  */
 public class LoginLogoutCliente extends Application {
     
+    private Logger logger=Logger.getLogger("ApplicationCliente.LoginLogoutCliente");
+    
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage)  {
+        Factoria implement=new Factoria();
         
         LoginController controller = new LoginController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Login.fxml"));
-        Parent root = (Parent) loader.load();
-        
-        controller = (loader.getController());
-        controller.setStage(stage);
-        controller.initStage(root);
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Fxml/Login.fxml"));
+        Parent root;
+        try {
+            root = (Parent) loader.load();
+            controller = (loader.getController());
+            controller.setStage(stage);
+            controller.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(LoginLogoutCliente.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         /*LogoutController controller = new LogoutController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/logout.fxml"));
-        Parent root = (Parent) loader.load();
-        
-        controller = (loader.getController());
-        controller.setStage(stage);
-        controller.initStage(root);*/
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Fxml/Logout.fxml"));
+            Parent root;
+
+            try {
+                root = (Parent) loader.load();
+                controller = (loader.getController());
+                controller.setStage(stage);
+                controller.initStage(root);  
+            } catch (IOException ex) {
+                Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
         }
         
         
