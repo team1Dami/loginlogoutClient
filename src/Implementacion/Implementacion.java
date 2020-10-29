@@ -5,6 +5,7 @@
  */
 package Implementacion;
 
+import classes.Message;
 import classes.User;
 import interfaces.ClientServer;
 
@@ -17,7 +18,7 @@ public class Implementacion implements ClientServer{
 
     @Override
     public User signIn(User user) {
-        userPrueba=prueba();
+        /*userPrueba=prueba();
         if(user.getLogIn().equalsIgnoreCase(userPrueba.getLogIn())){
             if(user.getPasswd().equals(userPrueba.getPasswd())){
                 user.setEmail("1");
@@ -28,13 +29,18 @@ public class Implementacion implements ClientServer{
         }
         else{
             user.setEmail("2");
-        }
+        }*/
+        Message mensaje=new Message();
+        mensaje.setUser(user);
+        //mensaje.setType("Login");
         return user;
     }
 
     @Override
     public User signUp(User user) {
-        
+        Message mensaje=new Message();
+        mensaje.setUser(user);
+        //mensaje.setType("Logup");
         return user;
     }
     

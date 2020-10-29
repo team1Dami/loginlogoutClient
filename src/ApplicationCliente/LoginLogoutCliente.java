@@ -8,6 +8,7 @@ package ApplicationCliente;
 import ApplicationCliente.Controller.LoginController;
 import ApplicationCliente.Controller.LogoutController;
 import Implementacion.Factoria;
+import Implementacion.Hilo;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +31,7 @@ public class LoginLogoutCliente extends Application {
         Factoria implement=new Factoria();
         
         LoginController controller = new LoginController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Fxml/Login.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("Controller/Login.fxml"));
         Parent root;
         try {
             root = (Parent) loader.load();
@@ -40,20 +41,7 @@ public class LoginLogoutCliente extends Application {
         } catch (IOException ex) {
             Logger.getLogger(LoginLogoutCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        /*LogoutController controller = new LogoutController();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Fxml/Logout.fxml"));
-            Parent root;
-
-            try {
-                root = (Parent) loader.load();
-                controller = (loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);  
-            } catch (IOException ex) {
-                Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-        }
+    }
         
         
     /**
@@ -62,7 +50,9 @@ public class LoginLogoutCliente extends Application {
     
     
      public static void main(String[] args) {
-        launch(args);
+         Hilo hilo=new Hilo();
+         hilo.start();
+        //launch(args);
     }
     
 }
