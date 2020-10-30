@@ -5,8 +5,7 @@
  */
 package ApplicationCliente;
 
-import ApplicationCliente.Controller.LoginController;
-import ApplicationCliente.Controller.LogoutController;
+import ApplicationCliente.Fxml.LoginController;
 import Implementacion.Factoria;
 import Implementacion.Hilo;
 import java.io.IOException;
