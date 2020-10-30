@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ApplicationCliente.Fxml;
+package ApplicationCliente.Controller;
 
 import ApplicationCliente.LoginLogoutCliente;
 import Implementacion.Factoria;
@@ -99,17 +99,17 @@ public class LoginController {
             user=imp.signIn(user);
             if(user.getEmail().equals("1")){
                 LogoutController controller = new LogoutController();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Logout.fxml"));
-            Parent root;
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("Logout.fxml"));
+                Parent root;
 
-            try {
-                root = (Parent) loader.load();
-                controller = (loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);  
-            } catch (IOException ex) {
-                Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                try {
+                    root = (Parent) loader.load();
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);  
+                } catch (IOException ex) {
+                    Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             else{
                 Alert alert=new Alert(Alert.AlertType.ERROR,"Error",ButtonType.OK);

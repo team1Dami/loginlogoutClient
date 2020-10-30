@@ -5,7 +5,7 @@
  */
 package ApplicationCliente;
 
-import ApplicationCliente.Fxml.LoginController;
+import ApplicationCliente.Controller.LoginController;
 import Implementacion.Factoria;
 import Implementacion.Hilo;
 import java.io.IOException;
@@ -49,9 +49,9 @@ public class LoginLogoutCliente extends Application {
     
     
      public static void main(String[] args) {
-         Hilo hilo=new Hilo();
-         hilo.start();
-        //launch(args);
+         //Hilo hilo=new Hilo();
+        //hilo.start();
+        launch(args);
     }
     
 }
