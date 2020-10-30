@@ -27,7 +27,6 @@ public class LoginLogoutCliente extends Application {
     
     @Override
     public void start(Stage stage)  {
-        Factoria implement=new Factoria();
         
         LoginController controller = new LoginController();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("Controller/Login.fxml"));
