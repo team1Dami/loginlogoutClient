@@ -10,7 +10,7 @@ package Implementacion;
  * @author rubir
  */
 public class Factoria {
-    public Implementacion getImplement(){
-        return new Implementacion();
+    public ClientServerImplementation getImplement(){
+        return new ClientServerImplementation();
     }
 }

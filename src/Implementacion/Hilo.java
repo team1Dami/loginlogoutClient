@@ -31,14 +31,6 @@ public class Hilo extends Thread {
     }
     
     public void run(){
-        User user=new User();
-        user.setLogIn("Ruben");
-        user.setPasswd("abcd*1234");
-        
-        Message mensaje=new Message();
-        mensaje.setUser(user);
-        
-        
         configFile=ResourceBundle.getBundle("Properties.Client");
         this.HOST=configFile.getString("HOST");
         //CONTROLAR QUE EN EL ARCHIVO DE CONFIGURACIONES METAN INFORMACION CORRECTO
@@ -48,14 +40,15 @@ public class Hilo extends Thread {
         ObjectOutputStream objectOutputStream=null;
         ObjectInputStream objectInputStream=null;
         try {
-            socket = new Socket(HOST, PORT);
+            //socket = new Socket(HOST, PORT);
+            socket = new Socket("192.168.20.105", 5000);
             
             objectOutputStream = new ObjectOutputStream (socket.getOutputStream()); 
-            objectOutputStream.writeObject(mensaje);
+            objectOutputStream.writeObject(message);
             
             objectInputStream = new ObjectInputStream(socket.getInputStream());
-            Message vuelta= (Message) objectInputStream.readObject();
-            System.out.println(vuelta.getUser().getLogIn()+" "+vuelta.getUser().getEmail());
+            message= (Message) objectInputStream.readObject();
+            
             
         } catch (IOException ex) {
             Logger.getLogger(Hilo.class.getName()).log(Level.SEVERE, null, ex);
@@ -77,5 +70,9 @@ public class Hilo extends Thread {
         }
             
             
+    }
+    
+    public Message getMessage(){
+        return message;
     }
 }

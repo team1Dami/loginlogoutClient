@@ -7,9 +7,8 @@ package ApplicationCliente.Controller;
 
 import ApplicationCliente.LoginLogoutCliente;
 import Implementacion.Factoria;
-import Implementacion.Implementacion;
+import Implementacion.ClientServerImplementation;
 import classes.User;
-import interfaces.ClientServer;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -95,7 +94,7 @@ public class LoginController {
             User user= new User();
             user.setLogIn(tfLogin.getText().toString());
             user.setPasswd(tfPasswd.getText().toString());
-            Implementacion imp=new Implementacion();
+            ClientServerImplementation imp=new ClientServerImplementation();
             user=imp.signIn(user);
             if(user.getEmail().equals("1")){
                 LogoutController controller = new LogoutController();
@@ -120,8 +119,8 @@ public class LoginController {
     }
     
     private void handleButtonRegister(ActionEvent event){
-        LogoutController controller = new LogoutController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("Logout.fxml"));
+        SignUpController controller = new SignUpController();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SignUp.fxml"));
         Parent root;
         try {
             root = (Parent) loader.load();
