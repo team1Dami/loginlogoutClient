@@ -24,6 +24,11 @@ public class Hilo extends Thread {
     private ResourceBundle configFile;
     private String HOST;
     private int PORT;
+    private Message message;
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
     
     public void run(){
         User user=new User();

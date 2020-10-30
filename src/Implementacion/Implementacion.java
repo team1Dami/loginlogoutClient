@@ -15,6 +15,8 @@ import interfaces.ClientServer;
  */
 public class Implementacion implements ClientServer{
     User userPrueba=new User();
+    
+    
 
     @Override
     public User signIn(User user) {
@@ -38,9 +40,13 @@ public class Implementacion implements ClientServer{
 
     @Override
     public User signUp(User user) {
+       
         Message mensaje=new Message();
         mensaje.setUser(user);
-        //mensaje.setType("Logup");
+        mensaje.setType(1);
+        Hilo hilo=new Hilo();
+        hilo.setMessage(mensaje);
+        hilo.start();
         return user;
     }
     
