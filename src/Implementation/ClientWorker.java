@@ -25,7 +25,7 @@ public class ClientWorker extends Thread {
     /**
      * Set the message information to a local object Message
      *
-     * @param message
+     * @param message object of class Message
      */
     public void setMessage(Message message) {
         this.message = message;
@@ -83,7 +83,7 @@ public class ClientWorker extends Thread {
     /**
      * Returns the object message
      *
-     * @return
+     * @return a class Message
      */
     public Message getMessage() {
         return message;
