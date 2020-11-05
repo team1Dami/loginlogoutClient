@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Controller;
+package ApplicationCliente.Controller;
 
-import Controller.LoginController;
+import ApplicationCliente.Controller.LoginController;
 import Implementacion.Factoria;
 import java.io.IOException;
 import java.util.logging.Level;

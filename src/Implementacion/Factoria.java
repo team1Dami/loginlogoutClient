@@ -6,11 +6,18 @@
 package Implementacion;
 
 /**
+ * Client implementation factory
  *
- * @author rubir
+ * @author Ruben
  */
 public class Factoria {
-    public Implementacion getImplement(){
-        return new Implementacion();
+
+    /**
+     * Returns an implementation
+     *
+     * @return Client server implementation
+     */
+    public ClientServerImplementation getImplement() {
+        return new ClientServerImplementation();
     }
 }
