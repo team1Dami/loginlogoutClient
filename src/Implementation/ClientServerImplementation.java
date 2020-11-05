@@ -78,8 +78,6 @@ public class ClientServerImplementation implements ClientServer {
         }
         message = hilo.getMessage();
         if (message.getException() != null) {
-
-        } else {
             user = null;
             String error = exceptions();
             Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);

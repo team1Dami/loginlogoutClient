@@ -126,7 +126,7 @@ public class SignUpController implements Initializable {
                 && tfPasswd.getText().length() <= MAX_PASS_LENGHT) {
             btnAccept.setDisable(false);
         } else {
-            alert = new Alert(Alert.AlertType.WARNING);
+          //  alert = new Alert(Alert.AlertType.WARNING);
             //  alert.showAndWait();
             btnAccept.setDisable(true);
         }
