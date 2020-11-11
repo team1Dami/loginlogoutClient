@@ -81,26 +81,14 @@ public class SignUpController implements Initializable {
         tfUser.textProperty().addListener(this::textChanged);
         tfUser.setPromptText("Introduzca un nombre de usuario");
         tfEmail.textProperty().addListener(this::textChanged);
-        tfEmail.setPromptText("Introduzca su Email");
+        tfEmail.setPromptText("Introduzca un email: example@example.com");
         tfPasswd.textProperty().addListener(this::textChanged);
         tfPasswd.setPromptText("Introduzca una contraseña");
         tfPasswd2.textProperty().addListener(this::textChanged);
         tfPasswd2.setPromptText("Repita su contraseña");
         btnCancel.setOnAction(this::handleButtonCancelarAction);
-        //   btnAccept.setDisable(false);
         btnAccept.setOnAction(this::handleButtonAceptarAction);
         stage.show();
-    }
-
-    /**
-     * Method to initialize the view
-     *
-     * @param location
-     * @param resources
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        logger.info("Beginning initializing controller");
     }
 
     /**
@@ -115,8 +103,7 @@ public class SignUpController implements Initializable {
             String oldValue,
             String newValue) {
         logger.info("Checking changes in text fields");
-        //   btnAccept.setDisable(false);
-        //  Alert alert;
+
         if (!tfEmail.getText().isEmpty()
                 && !tfFullName.getText().isEmpty()
                 && !tfUser.getText().isEmpty()
@@ -126,7 +113,6 @@ public class SignUpController implements Initializable {
                 && tfPasswd.getText().equals(tfPasswd2.getText())
                 && tfPasswd.getText().length() >= MIN_PASS_LENGHT
                 && tfPasswd.getText().length() <= MAX_PASS_LENGHT) {
-            //   btnAccept.setDisable(false);
         } else {
             //  alert = new Alert(Alert.AlertType.WARNING);
             //  alert.showAndWait();
@@ -153,6 +139,7 @@ public class SignUpController implements Initializable {
      */
     @FXML
     private void handleButtonAceptarAction(ActionEvent event) {
+        Alert alert;
         try {
             User myUser;
             if (validateEmail(tfEmail.getText())) {
@@ -166,6 +153,19 @@ public class SignUpController implements Initializable {
                 User serverUser = imp.signUp(myUser);
 
                 if (null != serverUser) {
+                    alert = new Alert(Alert.AlertType.WARNING, "Se ha registrado correctamente", ButtonType.OK);
+                    alert.showAndWait();
+                    FXMLLoader loader
+                            = new FXMLLoader(getClass().getResource("Login.fxml"));
+                    Parent root = (Parent) loader.load();
+                    LoginController controller = ((LoginController) loader.getController());
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+                } else {
+                    alert = new Alert(Alert.AlertType.ERROR, "No se ha podido conectar con el servidor."
+                            + "Inténtelo más tarde.", ButtonType.OK);
+                    alert.showAndWait();
                     FXMLLoader loader
                             = new FXMLLoader(getClass().getResource("Login.fxml"));
                     Parent root = (Parent) loader.load();
@@ -174,13 +174,17 @@ public class SignUpController implements Initializable {
                     controller.setStage(stage);
                     controller.initStage(root);
                 }
+
             }
         } catch (EmailFormatException ex) {
             Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
-            Alert alert = new Alert(Alert.AlertType.WARNING, ex.getMessage(), ButtonType.OK);
+            alert = new Alert(Alert.AlertType.WARNING, ex.getMessage(), ButtonType.OK);
             alert.showAndWait();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "User can not set", e.getMessage());
+            alert = new Alert(Alert.AlertType.ERROR, "No se ha podido conectar con el servidor."
+                    + "Inténtelo más tarde.", ButtonType.OK);
+            alert.showAndWait();
         }
     }
 
@@ -206,7 +210,6 @@ public class SignUpController implements Initializable {
             logger.log(Level.SEVERE,
                     "UI LoginController: Error opening users managing window: {0}",
                     ex.getMessage());
-            Alert alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
         }
     }
 
@@ -232,5 +235,10 @@ public class SignUpController implements Initializable {
             alert.showAndWait();
         }
         return false;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+
     }
 }
