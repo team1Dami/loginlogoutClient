@@ -2,6 +2,7 @@ package ApplicationCliente.Controller;
 
 import Implementation.ClientServerImplementation;
 import classes.User;
+import exceptions.EmailFormatException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -86,7 +87,7 @@ public class SignUpController implements Initializable {
         tfPasswd2.textProperty().addListener(this::textChanged);
         tfPasswd2.setPromptText("Repita su contraseña");
         btnCancel.setOnAction(this::handleButtonCancelarAction);
-        btnAccept.setDisable(true);
+        //   btnAccept.setDisable(false);
         btnAccept.setOnAction(this::handleButtonAceptarAction);
         stage.show();
     }
@@ -114,8 +115,9 @@ public class SignUpController implements Initializable {
             String oldValue,
             String newValue) {
         logger.info("Checking changes in text fields");
-        Alert alert;
-        if (validateEmail(tfEmail.getText().toString())
+        //   btnAccept.setDisable(false);
+        //  Alert alert;
+        if (!tfEmail.getText().isEmpty()
                 && !tfFullName.getText().isEmpty()
                 && !tfUser.getText().isEmpty()
                 && !tfEmail.getText().isEmpty()
@@ -124,11 +126,11 @@ public class SignUpController implements Initializable {
                 && tfPasswd.getText().equals(tfPasswd2.getText())
                 && tfPasswd.getText().length() >= MIN_PASS_LENGHT
                 && tfPasswd.getText().length() <= MAX_PASS_LENGHT) {
-            btnAccept.setDisable(false);
+            //   btnAccept.setDisable(false);
         } else {
-          //  alert = new Alert(Alert.AlertType.WARNING);
+            //  alert = new Alert(Alert.AlertType.WARNING);
             //  alert.showAndWait();
-            btnAccept.setDisable(true);
+            //  btnAccept.setDisable(false);
         }
     }
 
@@ -138,7 +140,7 @@ public class SignUpController implements Initializable {
      * @param event
      */
     private void handleWindowShowing(WindowEvent event) {
-        btnAccept.setDisable(true);
+        btnAccept.setDisable(false);
     }
 
     /**
@@ -151,26 +153,32 @@ public class SignUpController implements Initializable {
      */
     @FXML
     private void handleButtonAceptarAction(ActionEvent event) {
-        User myUser;
         try {
-            myUser = new User();
-            myUser.setFullname(tfFullName.getText().toString());
-            myUser.setLogIn(tfUser.getText().toString());
-            myUser.setEmail(tfEmail.getText().toString());
-            myUser.setPasswd(tfPasswd.getText().toString());
-            ClientServerImplementation imp = new ClientServerImplementation();
-            User serverUser = imp.signUp(myUser);
+            User myUser;
+            if (validateEmail(tfEmail.getText())) {
 
-            if (null != serverUser) {
-                FXMLLoader loader
-                        = new FXMLLoader(getClass().getResource("Login.fxml"));
-                Parent root = (Parent) loader.load();
-                LoginController controller = ((LoginController) loader.getController());
-                controller = (loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
+                myUser = new User();
+                myUser.setFullname(tfFullName.getText().toString());
+                myUser.setLogIn(tfUser.getText().toString());
+                myUser.setEmail(tfEmail.getText().toString());
+                myUser.setPasswd(tfPasswd.getText().toString());
+                ClientServerImplementation imp = new ClientServerImplementation();
+                User serverUser = imp.signUp(myUser);
+
+                if (null != serverUser) {
+                    FXMLLoader loader
+                            = new FXMLLoader(getClass().getResource("Login.fxml"));
+                    Parent root = (Parent) loader.load();
+                    LoginController controller = ((LoginController) loader.getController());
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+                }
             }
-
+        } catch (EmailFormatException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.WARNING, ex.getMessage(), ButtonType.OK);
+            alert.showAndWait();
         } catch (Exception e) {
             logger.log(Level.SEVERE, "User can not set", e.getMessage());
         }
@@ -208,15 +216,21 @@ public class SignUpController implements Initializable {
      * @param email
      * @return true or false
      */
-    private boolean validateEmail(String email) {
+    private boolean validateEmail(String email) throws EmailFormatException {
         // Patron para validar el email
-        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        try {
+            Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
-        Matcher mather = pattern.matcher(email);
-        if (!mather.find()) {
-            return false;
-        } else {
-            return true;
+            Matcher mather = pattern.matcher(email);
+            if (!mather.find()) {
+                throw new EmailFormatException(null);
+            } else {
+                return true;
+            }
+        } catch (EmailFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
         }
+        return false;
     }
 }
