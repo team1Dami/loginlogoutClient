@@ -5,6 +5,7 @@ import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import classes.User;
 import exceptions.LoginNoExistException;
+import exceptions.NoConnectionDBException;
 import exceptions.NoServerConnectionException;
 import exceptions.PasswordErrorException;
 import interfaces.ClientServer;
@@ -33,6 +34,9 @@ import javafx.stage.Stage;
 public class LoginController {
 
     private static final Logger logger = Logger.getLogger("ApplicationClient.Controller.LoginController");
+
+    private static final int MAX_PASS_LENGHT = 12;
+
     //Declaration of attributes
     @FXML
     private Stage stage;
@@ -68,6 +72,7 @@ public class LoginController {
         stage.show();
 
         tfLogin.textProperty().addListener(this::textChange);
+        tfLogin.setFocusTraversable(true);
         tfPasswd.textProperty().addListener(this::textChange);
         btnLogin.setOnAction(this::handleButtonLogin);
         btnRegister.setOnAction(this::handleButtonRegister);
@@ -85,8 +90,10 @@ public class LoginController {
         //disable the Login button
 
         //If password field is higher than 12
-        if (tfPasswd.getText().length() > 12) {
+        if (tfPasswd.getText().length() > MAX_PASS_LENGHT) {
             btnLogin.setDisable(true);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "La contraseña supera el numero maximo de caracteres", ButtonType.OK);
+            alert.showAndWait();
         } //If text fields are empty 
         else if (tfLogin.getText().trim().isEmpty()
                 || tfPasswd.getText().trim().isEmpty()) {
@@ -108,33 +115,39 @@ public class LoginController {
         if (tfLogin.getText().isEmpty() || tfPasswd.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error", ButtonType.APPLY);
             alert.showAndWait();
-        }else if(validateNoBlankSpace(tfLogin.getText())){
+        } else if (validateNoBlankSpace(tfLogin.getText())) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "No deje espacios en blanco en el Usuario", ButtonType.APPLY);
             alert.showAndWait();
-        }else if(validateNoBlankSpace(tfPasswd.getText())){
+        } else if (validateNoBlankSpace(tfPasswd.getText())) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "No deje espacios en blanco en la contraseña", ButtonType.APPLY);
-            
-        }
-        else {
+
+        } else {
             User myUser = new User();
             myUser.setLogIn(tfLogin.getText().toString());
             myUser.setPasswd(tfPasswd.getText().toString());
             ClientServer imp = ImpFactory.getImplement();
             User serverUser = null;
+
             try {
                 serverUser = imp.signIn(myUser);
             } catch (LoginNoExistException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-                Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                tfLogin.requestFocus();
+                Alert alert = new Alert(Alert.AlertType.WARNING, "El usuario no existe", ButtonType.OK);
                 alert.showAndWait();
+
             } catch (PasswordErrorException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-                Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
-            alert.showAndWait();
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Contraseña incorrecta", ButtonType.OK);
+                alert.showAndWait();
             } catch (NoServerConnectionException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-                Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
-            alert.showAndWait();
+                Alert alert = new Alert(Alert.AlertType.ERROR, "No se ha podido conectar con el servidor", ButtonType.OK);
+                alert.showAndWait();
+            } catch (NoConnectionDBException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido un error inesperado", ButtonType.OK);
+                alert.showAndWait();
             }
 
             if (serverUser != null) {
@@ -150,7 +163,7 @@ public class LoginController {
                     controller.initStage(root);
                 } catch (IOException ex) {
                     Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
-                    Alert alert = new Alert(Alert.AlertType.ERROR,"Ha ocurrido un error inesperado", ButtonType.OK);
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido un error inesperado", ButtonType.OK);
                     alert.showAndWait();
                 }
             } else {
@@ -159,7 +172,7 @@ public class LoginController {
         }
 
     }
-    
+
     private boolean validateNoBlankSpace(String email) {
         // Patron para validar el email
         Pattern pattern = Pattern.compile("\\s");

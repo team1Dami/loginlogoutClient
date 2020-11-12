@@ -1,10 +1,12 @@
 package Implementation;
 
 import classes.Message;
+import exceptions.NoServerConnectionException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,13 +48,20 @@ public class ClientWorker extends Thread {
         try {
             socket = new Socket(HOST, PORT);
 
-            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            objectOutputStream.writeObject(message);
-            logger.log(Level.INFO, "Mensaje{0}", message.getUser());
+            try {
+                socket.setSoTimeout(1000);
+            } catch (SocketException ex) {
+                message.setException(new NoServerConnectionException(null));
+            }
 
-            objectInputStream = new ObjectInputStream(socket.getInputStream());
-            message = (Message) objectInputStream.readObject();
+            if (message.getException() == null) {
+                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject(message);
+                logger.log(Level.INFO, "Mensaje{0}", message.getUser());
 
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                message = (Message) objectInputStream.readObject();
+            }
         } catch (IOException ex) {
             Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
             message.setException(ex);

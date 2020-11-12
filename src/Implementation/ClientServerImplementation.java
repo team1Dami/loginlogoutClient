@@ -3,6 +3,8 @@ package Implementation;
 import classes.Message;
 import classes.User;
 import exceptions.LoginNoExistException;
+import exceptions.NoConnectionDBException;
+import exceptions.NoServerConnectionException;
 import exceptions.PasswordErrorException;
 import interfaces.ClientServer;
 import java.util.logging.Level;
@@ -28,9 +30,12 @@ public class ClientServerImplementation implements ClientServer {
      *
      * @param user
      * @return Object class User
+     * @throws exceptions.PasswordErrorException
+     * @throws exceptions.LoginNoExistException
+     * @throws exceptions.NoServerConnectionException
      */
     @Override
-    public User signIn(User user) throws PasswordErrorException, LoginNoExistException {
+    public User signIn(User user) throws PasswordErrorException, LoginNoExistException, NoServerConnectionException, NoConnectionDBException {
         userPrueba = user;
         message.setUser(user);
 
@@ -48,19 +53,21 @@ public class ClientServerImplementation implements ClientServer {
         user = message.getUser();
         this.login = user.getLogIn();
         if (message.getException() != null) {
+            user = null;
+            System.out.println(message.getException());
             if(message.getException().equals("LoginNoExistException")){
                 throw new LoginNoExistException(null);
             }
-            if(message.getException().equals("PasswordErrorException")){
+            else if(message.getException().equals("PasswordErrorException")){
                 throw new PasswordErrorException(null);
             }
-            if(message.getException().equals("LoginNoExistException")){
-                try {
-                    throw new LoginNoExistException(null);
-                } catch (LoginNoExistException ex) {
-                    Logger.getLogger(ClientServerImplementation.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            else if (message.getException().equals("NoConnectionDBException")){
+                throw new NoConnectionDBException(null);
             }
+            else{
+                throw new NoServerConnectionException(null);
+            }
+            
             /*user = null;
             String error = exceptions();
             Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
