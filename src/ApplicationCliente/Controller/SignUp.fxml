@@ -64,7 +64,7 @@
                   <Insets left="80.0" right="150.0" />
                </VBox.margin>
             </TextField>
-            <Label text="Contraseña">
+            <Label fx:id="txtPass" text="Contraseña">
                <VBox.margin>
                   <Insets left="80.0" top="10.0" />
                </VBox.margin>
@@ -74,7 +74,7 @@
                   <Insets left="80.0" right="150.0" />
                </VBox.margin>
             </PasswordField>
-            <Label text="Confirmar contraseña">
+            <Label fx:id="txtPass2" text="Confirmar contraseña">
                <VBox.margin>
                   <Insets left="80.0" top="10.0" />
                </VBox.margin>

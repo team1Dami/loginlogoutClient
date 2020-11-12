@@ -19,7 +19,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.stage.WindowEvent;
 
 /**
@@ -50,6 +52,10 @@ public class SignUpController implements Initializable {
     private Button btnCancel;
     @FXML
     private Button btnAccept;
+    @FXML
+    private Label txtPass;
+    @FXML
+    private Label txtPass2;
 
     /**
      * Method to set the stage
@@ -126,10 +132,27 @@ public class SignUpController implements Initializable {
                 && tfPasswd.getText().length() <= MAX_PASS_LENGHT) {
             btnAccept.setDisable(false);
         } else {
-          //  alert = new Alert(Alert.AlertType.WARNING);
+            btnAccept.setDisable(false);
+            //  alert = new Alert(Alert.AlertType.WARNING);
             //  alert.showAndWait();
-            btnAccept.setDisable(true);
+            //btnAccept.setDisable(true);
         }
+
+        /*if (tfPasswd.getText().length() < MIN_PASS_LENGHT || tfPasswd.getText().length() > MAX_PASS_LENGHT) {
+            txtPass.setText("Contraseña (Introduzca una contraseña con mas de 6 caracteres y menor de 12 cacracteres)");
+            txtPass.setTextFill(Color.web("#f51111"));
+        } else {
+            txtPass.setText("Contraseña");
+            txtPass.setTextFill(Color.web("#000000"));
+        }
+
+        if (tfPasswd2.getText().length() < MIN_PASS_LENGHT || tfPasswd2.getText().length() > MAX_PASS_LENGHT) {
+            txtPass2.setText("Contraseña (Introduzca una contraseña con mas de 6 caracteres y menor de 12 cacracteres)");
+            txtPass2.setTextFill(Color.web("#f51111"));
+        } else {
+            txtPass2.setText("Contraseña");
+            txtPass2.setTextFill(Color.web("#000000"));
+        }*/
     }
 
     /**
@@ -138,7 +161,7 @@ public class SignUpController implements Initializable {
      * @param event
      */
     private void handleWindowShowing(WindowEvent event) {
-        btnAccept.setDisable(true);
+        btnAccept.setDisable(false);
     }
 
     /**
@@ -151,28 +174,59 @@ public class SignUpController implements Initializable {
      */
     @FXML
     private void handleButtonAceptarAction(ActionEvent event) {
-        User myUser;
-        try {
-            myUser = new User();
-            myUser.setFullname(tfFullName.getText().toString());
-            myUser.setLogIn(tfUser.getText().toString());
-            myUser.setEmail(tfEmail.getText().toString());
-            myUser.setPasswd(tfPasswd.getText().toString());
-            ClientServerImplementation imp = new ClientServerImplementation();
-            User serverUser = imp.signUp(myUser);
+        boolean contraseñaCorrecta = false;
+        boolean contraseña2Correcta = false;
 
-            if (null != serverUser) {
-                FXMLLoader loader
-                        = new FXMLLoader(getClass().getResource("Login.fxml"));
-                Parent root = (Parent) loader.load();
-                LoginController controller = ((LoginController) loader.getController());
-                controller = (loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
+        if (tfPasswd.getText().length() < MIN_PASS_LENGHT) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Error la contraseña es menor de 6");
+            alert.showAndWait();
+        }else if(tfPasswd.getText().length() > MAX_PASS_LENGHT){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Error la contraseña es mayor de 12");
+            alert.showAndWait();
+        }
+        else {
+            contraseñaCorrecta = true;
+        }
+
+        if (tfPasswd2.getText().length() < MIN_PASS_LENGHT) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Error la confirmacion de la contraseña es menor de 6");
+            alert.showAndWait();
+        }else if (tfPasswd2.getText().length() > MAX_PASS_LENGHT) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("Error la confirmacion de la contraseña es mayor de 12");
+            alert.showAndWait();
+        }
+        else {
+            contraseña2Correcta = true;
+        }
+
+        if (contraseñaCorrecta && contraseña2Correcta) {
+            User myUser;
+            try {
+                myUser = new User();
+                myUser.setFullname(tfFullName.getText().toString());
+                myUser.setLogIn(tfUser.getText().toString());
+                myUser.setEmail(tfEmail.getText().toString());
+                myUser.setPasswd(tfPasswd.getText().toString());
+                ClientServerImplementation imp = new ClientServerImplementation();
+                User serverUser = imp.signUp(myUser);
+
+                if (null != serverUser) {
+                    FXMLLoader loader
+                            = new FXMLLoader(getClass().getResource("Login.fxml"));
+                    Parent root = (Parent) loader.load();
+                    LoginController controller = ((LoginController) loader.getController());
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+                }
+
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "User can not set", e.getMessage());
             }
-
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "User can not set", e.getMessage());
         }
     }
 
