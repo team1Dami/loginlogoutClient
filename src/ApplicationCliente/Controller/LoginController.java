@@ -150,7 +150,7 @@ public class LoginController {
                     controller.initStage(root);
                 } catch (IOException ex) {
                     Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
-                    Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                    Alert alert = new Alert(Alert.AlertType.ERROR,"Ha ocurrido un error inesperado", ButtonType.OK);
                     alert.showAndWait();
                 }
             } else {

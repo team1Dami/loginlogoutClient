@@ -175,7 +175,7 @@ public class SignUpController implements Initializable {
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "User can not set", e.getMessage());
-            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido un error inesperado ", ButtonType.OK);
             alert.showAndWait();
         }
     }
