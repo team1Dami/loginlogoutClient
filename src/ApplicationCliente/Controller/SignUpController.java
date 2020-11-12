@@ -1,7 +1,9 @@
 package ApplicationCliente.Controller;
 
 import Implementation.ClientServerImplementation;
+import Implementation.ImpFactory;
 import classes.User;
+import interfaces.ClientServer;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -158,7 +160,7 @@ public class SignUpController implements Initializable {
             myUser.setLogIn(tfUser.getText().toString());
             myUser.setEmail(tfEmail.getText().toString());
             myUser.setPasswd(tfPasswd.getText().toString());
-            ClientServerImplementation imp = new ClientServerImplementation();
+            ClientServer imp = ImpFactory.getImplement();
             User serverUser = imp.signUp(myUser);
 
             if (null != serverUser) {
@@ -173,6 +175,8 @@ public class SignUpController implements Initializable {
 
         } catch (Exception e) {
             logger.log(Level.SEVERE, "User can not set", e.getMessage());
+            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
         }
     }
 

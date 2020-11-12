@@ -4,9 +4,15 @@ import ApplicationCliente.LoginLogoutCliente;
 import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import classes.User;
+import exceptions.LoginNoExistException;
+import exceptions.NoServerConnectionException;
+import exceptions.PasswordErrorException;
+import interfaces.ClientServer;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -101,13 +107,35 @@ public class LoginController {
     private void handleButtonLogin(ActionEvent event) {
         if (tfLogin.getText().isEmpty() || tfPasswd.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error", ButtonType.APPLY);
-        } else {
+            alert.showAndWait();
+        }else if(validateNoBlankSpace(tfLogin.getText())){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "No deje espacios en blanco en el Usuario", ButtonType.APPLY);
+            alert.showAndWait();
+        }else if(validateNoBlankSpace(tfPasswd.getText())){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "No deje espacios en blanco en la contraseña", ButtonType.APPLY);
+            
+        }
+        else {
             User myUser = new User();
             myUser.setLogIn(tfLogin.getText().toString());
             myUser.setPasswd(tfPasswd.getText().toString());
-            ClientServerImplementation imp = ImpFactory.getImplement();
+            ClientServer imp = ImpFactory.getImplement();
             User serverUser = null;
-            serverUser = imp.signIn(myUser);
+            try {
+                serverUser = imp.signIn(myUser);
+            } catch (LoginNoExistException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                alert.showAndWait();
+            } catch (PasswordErrorException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+            } catch (NoServerConnectionException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+            }
 
             if (serverUser != null) {
 
@@ -122,12 +150,26 @@ public class LoginController {
                     controller.initStage(root);
                 } catch (IOException ex) {
                     Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
+                    Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+                    alert.showAndWait();
                 }
             } else {
                 logger.info("User null");
             }
         }
 
+    }
+    
+    private boolean validateNoBlankSpace(String email) {
+        // Patron para validar el email
+        Pattern pattern = Pattern.compile("\\s");
+
+        Matcher mather = pattern.matcher(email);
+        if (!mather.find()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

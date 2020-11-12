@@ -15,7 +15,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
@@ -88,6 +90,8 @@ public class LogoutController {
             controller.initStage(root);
         } catch (IOException ex) {
             Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
+            Alert alert = new Alert(Alert.AlertType.ERROR, ex.getMessage(), ButtonType.OK);
+            alert.showAndWait();
         }
 
     }

@@ -1,5 +1,7 @@
 package Implementation;
 
+import interfaces.ClientServer;
+
 /**
  * Client implementation factory
  *
@@ -12,7 +14,7 @@ public class ImpFactory {
      *
      * @return Client server implementation
      */
-    public static ClientServerImplementation getImplement() {
+    public static ClientServer getImplement() {
         return new ClientServerImplementation();
     }
 }

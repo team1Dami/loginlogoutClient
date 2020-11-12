@@ -2,6 +2,8 @@ package Implementation;
 
 import classes.Message;
 import classes.User;
+import exceptions.LoginNoExistException;
+import exceptions.PasswordErrorException;
 import interfaces.ClientServer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +30,7 @@ public class ClientServerImplementation implements ClientServer {
      * @return Object class User
      */
     @Override
-    public User signIn(User user) {
+    public User signIn(User user) throws PasswordErrorException, LoginNoExistException {
         userPrueba = user;
         message.setUser(user);
 
@@ -46,11 +48,24 @@ public class ClientServerImplementation implements ClientServer {
         user = message.getUser();
         this.login = user.getLogIn();
         if (message.getException() != null) {
-            user = null;
+            if(message.getException().equals("LoginNoExistException")){
+                throw new LoginNoExistException(null);
+            }
+            if(message.getException().equals("PasswordErrorException")){
+                throw new PasswordErrorException(null);
+            }
+            if(message.getException().equals("LoginNoExistException")){
+                try {
+                    throw new LoginNoExistException(null);
+                } catch (LoginNoExistException ex) {
+                    Logger.getLogger(ClientServerImplementation.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            /*user = null;
             String error = exceptions();
             Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
             alert.showAndWait();
-            message.setException(null);
+            message.setException(null);*/
         }
         return user;
     }
