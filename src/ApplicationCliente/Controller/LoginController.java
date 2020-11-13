@@ -115,7 +115,7 @@ public class LoginController {
      * Action event handler. It validate the login and password fields. If both
      * fields are ok open logout view.
      *
-     * @param event
+     * @param event Get the event of the button
      */
     private void handleButtonLogin(ActionEvent event) {
         if (tfLogin.getText().isEmpty() || tfPasswd.getText().isEmpty()) {
@@ -185,7 +185,7 @@ public class LoginController {
      * Validate that user and password texfields don´t contain blank spaces
      *
      * @param text Is the String that validate
-     * @return
+     * @return true or false if the texfield contain blank space
      */
     private boolean validateNoBlankSpace(String text) {
         // Patron para validar los campos de texto
@@ -202,7 +202,7 @@ public class LoginController {
     /**
      * Action event handler. It open register view.
      *
-     * @param event
+     * @param event Get the event of the button
      */
     private void handleButtonRegister(ActionEvent event) {
 
