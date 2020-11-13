@@ -233,7 +233,6 @@ public class SignUpController {
     private boolean validateFields(String text) {
 
         if (text.contains(" ")) {
-            System.out.println("No cumplo con las normas");
             return false;
         } else {
             return true;
