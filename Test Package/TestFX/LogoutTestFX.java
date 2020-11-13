@@ -44,12 +44,12 @@ public class LogoutTestFX extends ApplicationTest {
         }
     }
     @Test
-    public void test1(){
+    public void test1VericacionBtnClose(){
         clickOn("#btnClose");       
     }
     
     @Test
-    public void test2(){
+    public void test2VerificacionBtnSignOut(){
         clickOn("#btnSignOut");
         verifyThat("#login", isVisible());
     }

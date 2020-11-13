@@ -46,7 +46,7 @@ public class LoginTestFX extends ApplicationTest {
     }
 
     @Test
-    public void test1() throws InterruptedException {
+    public void test1CamposValidos() throws InterruptedException {
         clickOn("#tfLogin");
         write("Prueba1");
         clickOn("#tfPasswd");
@@ -56,7 +56,7 @@ public class LoginTestFX extends ApplicationTest {
     }
 
     @Test
-    public void test2() {
+    public void test2CamposValidosPeroNoALaVez() {
         clickOn("#tfLogin");
         write("Prueba1");
         verifyThat("#btnLogin", isDisabled());
@@ -68,7 +68,7 @@ public class LoginTestFX extends ApplicationTest {
     }
 
     @Test
-    public void test3() {
+    public void test3CamposFueraDeRango() {
         clickOn("#tfLogin");
         write("HolaBienasTardesMeLLamoFedericoGarciaLorcaYVengoAcConquistarElMundo");
         verifyThat("#btnLogin", isDisabled());
