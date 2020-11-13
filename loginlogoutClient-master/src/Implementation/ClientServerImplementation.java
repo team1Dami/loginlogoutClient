@@ -42,7 +42,10 @@ public class ClientServerImplementation implements ClientServer {
             Logger.getLogger(ClientServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         message = hilo.getMessage();
-
+        if(hilo.getSocketOutOfTime()){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido algun error, el servidor no responde ", ButtonType.OK);
+            alert.showAndWait();
+        }
         user = message.getUser();
         this.login = user.getLogIn();
         if (message.getException() != null) {
@@ -77,12 +80,14 @@ public class ClientServerImplementation implements ClientServer {
             Logger.getLogger(ClientServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         message = hilo.getMessage();
+        if(hilo.getSocketOutOfTime()){
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido algun error, el servidor no responde ", ButtonType.OK);
+            alert.showAndWait();
+        }
         if (message.getException() != null) {
-
-        } else {
             user = null;
             String error = exceptions();
-            Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido algun error, verifique otra vez si todo esta correcto ", ButtonType.OK);
             alert.showAndWait();
             message.setException(null);
         }

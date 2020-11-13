@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -29,7 +30,7 @@ import javafx.stage.WindowEvent;
  *
  * @author saray
  */
-public class SignUpController implements Initializable {
+public class SignUpController {
 
     private static final Logger logger = Logger.getLogger("ApplicationClient.Controller.SignUpController");
 
@@ -61,6 +62,10 @@ public class SignUpController implements Initializable {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+    private void WINDOW_SHOWING(WindowEvent we){
+    
+    }
+    
 
     /**
      * Method to initialice the stage and add the events to the elements of the
@@ -77,6 +82,30 @@ public class SignUpController implements Initializable {
         stage.setTitle("Formulario de registro");
         stage.setResizable(false);
         stage.setOnShowing(this::handleWindowShowing);
+        stage.setOnCloseRequest(this::setOncloseRequest);
+        
+        /*
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+          public void handle(WindowEvent we) {
+                     try {
+            FXMLLoader loader
+                    = new FXMLLoader(getClass().getResource("Login.fxml"));
+            Parent newroot = (Parent) loader.load();
+            LoginController controller = ((LoginController) loader.getController());
+            controller = (loader.getController());
+            controller.setStage(stage);
+            controller.initStage(newroot);
+            we.consume(); //hacer como si nada hubiese pasado
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE,
+                    "UI LoginController: Error opening users managing window: {0}",
+                    ex.getMessage());
+           alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
+        }
+          }
+      });      
+        */
         tfFullName.textProperty().addListener(this::textChanged);
         tfFullName.setPromptText("Introduzca su nombre completo");
         tfUser.textProperty().addListener(this::textChanged);
@@ -90,8 +119,43 @@ public class SignUpController implements Initializable {
         btnCancel.setOnAction(this::handleButtonCancelarAction);
         btnAccept.setDisable(true);
         btnAccept.setOnAction(this::handleButtonAceptarAction);
-        stage.show();
+        stage.showAndWait();
     }
+    
+    //method that asks when you press the x if you want to go back or not, if you press OK you go back to login otherwhise you stay in the signup
+     private void setOncloseRequest(WindowEvent we){
+        
+         try {
+           alert = new Alert(Alert.AlertType.WARNING, "Desea Salir de esta ventana", ButtonType.OK,ButtonType.CANCEL);
+           alert.showAndWait();
+           if(alert.getResult().getButtonData().isCancelButton()){          
+               alert = new Alert(Alert.AlertType.WARNING, "Se ha cancelado la accion",ButtonType.OK);
+               alert.showAndWait();
+               we.consume();
+            
+           }else{  
+            /*   
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+            Parent newroot = (Parent) loader.load();
+            LoginController controller = ((LoginController) loader.getController());
+            controller = (loader.getController());
+            controller.setStage(stage);
+            controller.initStage(newroot);
+             */
+           }
+           
+            
+            //we.consume(); //hacer como si nada hubiese pasado
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE,
+                    "UI LoginController: Error opening users managing window: {0}",
+                    ex.getMessage());
+           alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
+           alert.showAndWait();
+        }
+    }
+    
 
     /**
      * Method to initialize the view
@@ -99,10 +163,6 @@ public class SignUpController implements Initializable {
      * @param location
      * @param resources
      */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        logger.info("Beginning initializing controller");
-    }
 
     /**
      * Method to control the changes on the text fields when the focus change If
@@ -112,24 +172,19 @@ public class SignUpController implements Initializable {
      * @param oldValue
      * @param newValue
      */
-    private void textChanged(ObservableValue observable,
-            String oldValue,
-            String newValue) {
+    private void textChanged(ObservableValue observable, String oldValue,String newValue) {
         //logger.info("Checking changes in text fields");//cada vez que se cambia un campo
         
-        
+        //if this requisites arent't fullfield(fields not been empty) the buttonAccept will stay disabled
         if ( !tfFullName.getText().isEmpty()
                 && !tfUser.getText().isEmpty()
                 && !tfEmail.getText().isEmpty()
                 && !tfPasswd.getText().isEmpty()
                 && !tfPasswd2.getText().isEmpty()
-                && tfPasswd.getText().length() >= MIN_PASS_LENGHT
-                && tfPasswd.getText().length() <= MAX_PASS_LENGHT){
+                && tfPasswd.getText().length() >= MIN_PASS_LENGHT//minimun lenght for the password
+                && tfPasswd.getText().length() <= MAX_PASS_LENGHT){//maximun lenght for the password
             btnAccept.setDisable(false);
         }else{
-            
-            alert = new Alert(Alert.AlertType.WARNING);
-            //  alert.showAndWait();
             btnAccept.setDisable(true);
         }
         
@@ -166,35 +221,54 @@ public class SignUpController implements Initializable {
             myUser.setPasswd(tfPasswd.getText().toString());
             
             if(!validateEmail(myUser.getEmail())){
+                //the gmail is not correct
             alert = new Alert(Alert.AlertType.WARNING, "Error en el gmail", ButtonType.OK);
-            alert.show();
+                          alert.showAndWait();
             }else if(!( tfPasswd.getText().equals(tfPasswd2.getText()))){
+                //the passwd is not correct
             alert = new Alert(Alert.AlertType.WARNING, "Error en la contraseña", ButtonType.OK);
-            alert.show();
+                          alert.showAndWait();
             }else{
+                //Create the new user
               ClientServer imp = ImpFactory.getImplement();
               User serverUser = imp.signUp(myUser);
 
               if (null != serverUser) {
-                FXMLLoader loader
-                        = new FXMLLoader(getClass().getResource("Login.fxml"));
-                Parent root = (Parent) loader.load();
-                LoginController controller = ((LoginController) loader.getController());
-                controller = (loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
-            }  
+                  stage.close();
+                  /*
+                  
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("Login.fxml"));
+                    Parent root = (Parent) loader.load();
+                    LoginController controller = ((LoginController) loader.getController());
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+                  */
+                }  
             }
-           
-            
-            /*
-            
-            */
-            
-
         } catch (Exception e) {
             logger.log(Level.SEVERE, "User can not set", e.getMessage());
             alert = new Alert(Alert.AlertType.WARNING, "No se ha podido conectar con el servidor. Inténtelo más tarde.");
+            alert.showAndWait();
+            
+            try {
+                //close the stage and go back to the login view
+                stage.close();
+                /*
+            FXMLLoader loader
+                    = new FXMLLoader(getClass().getResource("Login.fxml"));
+            Parent root = (Parent) loader.load();
+            LoginController controller = ((LoginController) loader.getController());
+            controller = (loader.getController());
+            controller.setStage(stage);
+            controller.initStage(root);
+                */
+
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE,
+                    "UI LoginController: Error opening users managing window: {0}",
+                    ex.getMessage());
+        }
         }
     }
 
@@ -207,7 +281,10 @@ public class SignUpController implements Initializable {
     @FXML
     private void handleButtonCancelarAction(ActionEvent event) {
 
-        try {
+        //try {
+             //close the stage and go back to the login view
+            stage.close();
+            /*
             FXMLLoader loader
                     = new FXMLLoader(getClass().getResource("Login.fxml"));
             Parent root = (Parent) loader.load();
@@ -222,6 +299,7 @@ public class SignUpController implements Initializable {
                     ex.getMessage());
            alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
         }
+            */
     }
 
     /**
@@ -231,9 +309,9 @@ public class SignUpController implements Initializable {
      * @return true or false
      */
     private boolean validateEmail(String email) {
-        // Patron para validar el email
+        // Patern to validate the email
         Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
-
+        // Compare and see if the email introduced respects the patern establiced
         Matcher mather = pattern.matcher(email);
         if (!mather.find()) {
             return false;

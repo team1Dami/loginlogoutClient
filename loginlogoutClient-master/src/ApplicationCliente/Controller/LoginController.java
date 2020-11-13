@@ -4,6 +4,9 @@ import ApplicationCliente.LoginLogoutCliente;
 import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import classes.User;
+import exceptions.LoginNoExistException;
+import exceptions.NoServerConnectionException;
+import exceptions.PasswordErrorException;
 import interfaces.ClientServer;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -108,7 +111,7 @@ public class LoginController {
             myUser.setPasswd(tfPasswd.getText().toString());
             ClientServer imp = ImpFactory.getImplement();
             User serverUser = null;
-            serverUser = imp.signIn(myUser);
+            //serverUser = imp.signIn(myUser);
 
             if (serverUser != null) {
 
@@ -137,15 +140,19 @@ public class LoginController {
      * @param event
      */
     private void handleButtonRegister(ActionEvent event) {
-
+        
         Parent root;
+        Stage newStage = new Stage();
         try {
+            //if in the view signup you press the x the aplication won't stop, it will go back to the login 
+            //stage.hide();
             SignUpController controller = new SignUpController();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("SignUp.fxml"));
             root = (Parent) loader.load();
             controller = (loader.getController());
-            controller.setStage(stage);
+            controller.setStage(newStage);
             controller.initStage(root);
+            //stage.showAndWait();
         } catch (IOException ex) {
             Logger.getLogger(LoginLogoutCliente.class.getName()).log(Level.SEVERE, null, ex);
             Alert alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
