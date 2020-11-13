@@ -7,12 +7,12 @@ import exceptions.NoConnectionDBException;
 import exceptions.NoServerConnectionException;
 import exceptions.UserExistException;
 import interfaces.ClientServer;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javafx.stage.Stage;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,7 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.WindowEvent;
 
 /**
- * Class to controll the elements of the signUp UI
+ * Class to control the elements of the signUp UI
  *
  * @author saray
  */
@@ -87,9 +87,9 @@ public class SignUpController {
     }
 
     /**
-     * Method to manage the button Accept At the begining the buton is disabled
+     * Method to manage the button Accept and the button Cancel
      *
-     * @param event
+     * @param event onClick in button Accept and onClick in button Cancel
      */
     private void handleWindowShowing(WindowEvent event) {
 
@@ -103,7 +103,7 @@ public class SignUpController {
      * values to the ClientServerImplementation class If the register is
      * succesfull the login view is opened
      *
-     * @param event
+     * @param event OnClick in button Accept
      */
     @FXML
     private void handleButtonAceptarAction(ActionEvent event) {
@@ -112,81 +112,58 @@ public class SignUpController {
         if (!validateFields(tfUser.getText())) {
             alert = new Alert(Alert.AlertType.WARNING, "El usuario no puede contener espacios en blanco", ButtonType.OK);
             alert.showAndWait();
-        } 
-        else if (!validateFields(tfPasswd.getText())) {
+        } else if (!validateFields(tfPasswd.getText())) {
             alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("La contraseña no puede contener espacios en blanco");
             alert.showAndWait();
-        } 
-        else if (!validateFields(tfPasswd2.getText())) {
+        } else if (!validateFields(tfPasswd2.getText())) {
             alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("La contraseña no puede contener espacios en blanco");
             alert.showAndWait();
-        }
-        
-        else {
+        } else {
             try {
                 User myUser;
+                if (validateEmail(tfEmail.getText())) {
+                    
+                    myUser = new User();
+                    myUser.setFullname(tfFullName.getText().toString());
+                    myUser.setLogIn(tfUser.getText().toString());
+                    myUser.setEmail(tfEmail.getText().toString());
+                    myUser.setPasswd(tfPasswd.getText().toString());
+                    ClientServer imp = ImpFactory.getImplement();
+                    User serverUser = imp.signUp(myUser);
 
-                myUser = new User();
-                myUser.setFullname(tfFullName.getText().toString());
-                myUser.setLogIn(tfUser.getText().toString());
-                myUser.setEmail(tfEmail.getText().toString());
-                myUser.setPasswd(tfPasswd.getText().toString());
-
-                ClientServer imp = ImpFactory.getImplement();
-                User serverUser = imp.signUp(myUser);
-
-                if (null != serverUser) {
-
-                    alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setContentText("Se ha registrado correctamente");
-                    alert.showAndWait();
-
-                    FXMLLoader loader
-                            = new FXMLLoader(getClass().getResource("Login.fxml"));
-                    Parent root = (Parent) loader.load();
-                    LoginController controller = ((LoginController) loader.getController());
-                    controller = (loader.getController());
-                    controller.setStage(stage);
-                    controller.initStage(root);
-
-                } else {
-
-                    alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("No se ha podido conectar con el servidor."
-                            + "\nInténtelo de nuevo más tarde.");
-                    alert.showAndWait();
-
-                    FXMLLoader loader
-                            = new FXMLLoader(getClass().getResource("Login.fxml"));
-                    Parent root = (Parent) loader.load();
-                    LoginController controller = ((LoginController) loader.getController());
-                    controller = (loader.getController());
-                    controller.setStage(stage);
-                    controller.initStage(root);
+                    if (null != serverUser) {
+                        alert = new Alert(Alert.AlertType.INFORMATION, "Se ha registrado correctamente", ButtonType.OK);
+                        alert.showAndWait();
+                        FXMLLoader loader
+                                = new FXMLLoader(getClass().getResource("Login.fxml"));
+                        Parent root = (Parent) loader.load();
+                        LoginController controller = ((LoginController) loader.getController());
+                        controller = (loader.getController());
+                        controller.setStage(stage);
+                        controller.initStage(root);
+                    } else {
+                        alert = new Alert(Alert.AlertType.ERROR, "No se ha podido conectar con el servidor."
+                                + "Inténtelo más tarde.", ButtonType.OK);
+                        alert.showAndWait();
+                        FXMLLoader loader
+                                = new FXMLLoader(getClass().getResource("Login.fxml"));
+                        Parent root = (Parent) loader.load();
+                        LoginController controller = ((LoginController) loader.getController());
+                        controller = (loader.getController());
+                        controller.setStage(stage);
+                        controller.initStage(root);
+                    }
                 }
-
-            } catch (UserExistException e) {
-                Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, e);
-                alert = new Alert(Alert.AlertType.WARNING);
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
-            } catch (NoServerConnectionException e) {
-                logger.log(Level.SEVERE, "No Server Connection", e.getMessage());
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
-            } catch (NoConnectionDBException e) {
-                logger.log(Level.SEVERE, "No DataBase Connection", e.getMessage());
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText(e.getMessage());
+            } catch (EmailFormatException ex) {
+                Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+                alert = new Alert(Alert.AlertType.WARNING, ex.getMessage(), ButtonType.OK);
                 alert.showAndWait();
             } catch (Exception e) {
                 logger.log(Level.SEVERE, "User can not set", e.getMessage());
-                alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("No se ha podido conectar con el servidor."
-                        + "\nInténtelo de nuevo más tarde.");
+                alert = new Alert(Alert.AlertType.ERROR, "No se ha podido conectar con el servidor."
+                        + "Inténtelo más tarde.", ButtonType.OK);
                 alert.showAndWait();
             }
         }
@@ -196,7 +173,7 @@ public class SignUpController {
      * Method to manage the action on the button Cancel if is clicked the logIn
      * view is opened, if it can't be opened an alert message is showing
      *
-     * @param event
+     * @param event onClik in button Cancel
      */
     @FXML
     private void handleButtonCancelarAction(ActionEvent event
@@ -238,16 +215,20 @@ public class SignUpController {
             } else {
                 return true;
             }
-        } catch (EmailFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage(), ButtonType.OK);
-            alert.showAndWait();
+        } catch (EmailFormatException e) {  
+            return false;
         }
-        return false;
+
     }
+
     /**
-     * Method to validate that the tfUser and the tfPassword doesn't contains white space
-     * @param text String that contains the value of tfUser or the value of tfPassword
-     * @return true if don't contains white space or returns false if contains white space
+     * Method to validate that the tfUser and the tfPassword doesn't contains
+     * white space
+     *
+     * @param text String that contains the value of tfUser or the value of
+     * tfPassword
+     * @return true if don't contains white space or returns false if contains
+     * white space
      */
     private boolean validateFields(String text) {
 
