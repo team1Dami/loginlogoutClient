@@ -1,7 +1,6 @@
 package ApplicationCliente.Controller;
 
 import ApplicationCliente.LoginLogoutCliente;
-import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import classes.User;
 import exceptions.LoginNoExistException;
@@ -40,13 +39,20 @@ public class LoginController {
     //Declaration of attributes
     @FXML
     private Stage stage;
+    //Declaration of the login button
 
     @FXML
     private Button btnLogin;
+    //Declaration of the register button
+
     @FXML
     private Button btnRegister;
+    //Declaration of the login textfield
+
     @FXML
     private TextField tfLogin;
+
+    //Declaration of the register textfield
     @FXML
     private TextField tfPasswd;
 
@@ -116,11 +122,11 @@ public class LoginController {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error", ButtonType.APPLY);
             alert.showAndWait();
         } else if (validateNoBlankSpace(tfLogin.getText())) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "No deje espacios en blanco en el Usuario", ButtonType.APPLY);
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No deje espacios en blanco en el Usuario", ButtonType.APPLY);
             alert.showAndWait();
         } else if (validateNoBlankSpace(tfPasswd.getText())) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "No deje espacios en blanco en la contraseña", ButtonType.APPLY);
-
+            Alert alert = new Alert(Alert.AlertType.WARNING, "No deje espacios en blanco en la contraseña", ButtonType.APPLY);
+            alert.showAndWait();
         } else {
             User myUser = new User();
             myUser.setLogIn(tfLogin.getText().toString());
@@ -140,10 +146,12 @@ public class LoginController {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Contraseña incorrecta", ButtonType.OK);
                 alert.showAndWait();
+
             } catch (NoServerConnectionException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
                 Alert alert = new Alert(Alert.AlertType.ERROR, "No se ha podido conectar con el servidor", ButtonType.OK);
                 alert.showAndWait();
+
             } catch (NoConnectionDBException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
                 Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido un error inesperado", ButtonType.OK);
@@ -173,11 +181,17 @@ public class LoginController {
 
     }
 
-    private boolean validateNoBlankSpace(String email) {
-        // Patron para validar el email
+    /**
+     * Validate that user and password texfields don´t contain blank spaces
+     *
+     * @param text Is the String that validate
+     * @return
+     */
+    private boolean validateNoBlankSpace(String text) {
+        // Patron para validar los campos de texto
         Pattern pattern = Pattern.compile("\\s");
 
-        Matcher mather = pattern.matcher(email);
+        Matcher mather = pattern.matcher(text);
         if (!mather.find()) {
             return false;
         } else {

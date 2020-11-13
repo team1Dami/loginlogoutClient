@@ -54,20 +54,17 @@ public class ClientServerImplementation implements ClientServer {
         this.login = user.getLogIn();
         if (message.getException() != null) {
             user = null;
-            System.out.println(message.getException());
-            if(message.getException().equals("LoginNoExistException")){
+
+            if (message.getException().equals("LoginNoExistException")) {
                 throw new LoginNoExistException(null);
-            }
-            else if(message.getException().equals("PasswordErrorException")){
+            } else if (message.getException().equals("PasswordErrorException")) {
                 throw new PasswordErrorException(null);
-            }
-            else if (message.getException().equals("NoConnectionDBException")){
+            } else if (message.getException().equals("NoConnectionDBException")) {
                 throw new NoConnectionDBException(null);
-            }
-            else{
+            } else {
                 throw new NoServerConnectionException(null);
             }
-            
+
             /*user = null;
             String error = exceptions();
             Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
@@ -80,7 +77,7 @@ public class ClientServerImplementation implements ClientServer {
     /**
      * It will generate a thread to connect the server, it'll recieve a User
      * object witch contains the information introduced by the user. It'll do a
-     * signup
+     * signup.
      *
      * @param user
      * @return Object class User

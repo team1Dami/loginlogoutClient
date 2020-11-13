@@ -5,7 +5,6 @@
  */
 package ApplicationCliente.Controller;
 
-import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -18,7 +17,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**

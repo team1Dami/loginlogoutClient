@@ -52,6 +52,7 @@ public class ClientWorker extends Thread {
                 socket.setSoTimeout(1000);
             } catch (SocketException ex) {
                 message.setException(new NoServerConnectionException(null));
+                Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             if (message.getException() == null) {
