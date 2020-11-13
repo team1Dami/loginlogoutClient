@@ -1,7 +1,7 @@
 package Implementation;
 
 import classes.Message;
-import classes.User;
+import exceptions.NoConnectionDBException;
 import exceptions.NoServerConnectionException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,10 +9,10 @@ import java.io.ObjectOutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Alert;
 
 /**
  * The class of the client thread

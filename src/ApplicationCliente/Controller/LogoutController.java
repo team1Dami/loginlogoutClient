@@ -5,9 +5,6 @@
  */
 package ApplicationCliente.Controller;
 
-import Implementation.ClientServerImplementation;
-import Implementation.ImpFactory;
-import classes.Message;
 import classes.User;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -23,7 +20,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import static sun.util.logging.LoggingSupport.log;
 
 /**
  * Controller of the signup view

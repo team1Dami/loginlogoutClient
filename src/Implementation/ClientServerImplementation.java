@@ -57,6 +57,8 @@ public class ClientServerImplementation implements ClientServer {
         if(message.getException()!=null){
             if(message.getException().equalsIgnoreCase("NoServerCon"))
                 throw new NoServerConnectionException(null);
+            if(message.getException().equalsIgnoreCase("NoDBCon"))
+                throw new NoConnectionDBException(null);
         }
         this.login = user.getLogIn();
         /*if (message.getException() != null) {

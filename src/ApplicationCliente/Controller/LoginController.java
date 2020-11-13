@@ -124,6 +124,9 @@ public class LoginController {
                 alert.showAndWait();
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (NoConnectionDBException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("No se ha podido conectar con la base de datos. Inténtelo más tarde.");
+                alert.showAndWait();
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ConnectException ex) {
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
