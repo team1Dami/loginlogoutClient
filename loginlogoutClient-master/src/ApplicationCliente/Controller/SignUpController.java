@@ -62,8 +62,21 @@ public class SignUpController {
     public void setStage(Stage stage) {
         this.stage = stage;
     }
-    private void WINDOW_SHOWING(WindowEvent we){
     
+    private void handleWindowShowing(WindowEvent we){
+        tfFullName.textProperty().addListener(this::textChanged);
+        tfFullName.setPromptText("Introduzca su nombre completo");
+        tfUser.textProperty().addListener(this::textChanged);
+        tfUser.setPromptText("Introduzca un nombre de usuario");
+        tfEmail.textProperty().addListener(this::textChanged);
+        tfEmail.setPromptText("Introduzca su Email");
+        tfPasswd.textProperty().addListener(this::textChanged);
+        tfPasswd.setPromptText("Introduzca una contraseña");
+        tfPasswd2.textProperty().addListener(this::textChanged);
+        tfPasswd2.setPromptText("Repita su contraseña");
+        btnCancel.setOnAction(this::handleButtonCancelarAction);
+        btnAccept.setDisable(true);
+        btnAccept.setOnAction(this::handleButtonAceptarAction);
     }
     
 
@@ -106,19 +119,7 @@ public class SignUpController {
           }
       });      
         */
-        tfFullName.textProperty().addListener(this::textChanged);
-        tfFullName.setPromptText("Introduzca su nombre completo");
-        tfUser.textProperty().addListener(this::textChanged);
-        tfUser.setPromptText("Introduzca un nombre de usuario");
-        tfEmail.textProperty().addListener(this::textChanged);
-        tfEmail.setPromptText("Introduzca su Email");
-        tfPasswd.textProperty().addListener(this::textChanged);
-        tfPasswd.setPromptText("Introduzca una contraseña");
-        tfPasswd2.textProperty().addListener(this::textChanged);
-        tfPasswd2.setPromptText("Repita su contraseña");
-        btnCancel.setOnAction(this::handleButtonCancelarAction);
-        btnAccept.setDisable(true);
-        btnAccept.setOnAction(this::handleButtonAceptarAction);
+       
         stage.showAndWait();
     }
     
@@ -191,15 +192,6 @@ public class SignUpController {
         
        
        
-    }
-
-    /**
-     * Method to manage the button Accept At the begining the buton is disabled
-     *
-     * @param event
-     */
-    private void handleWindowShowing(WindowEvent event) {
-        btnAccept.setDisable(true);
     }
 
     /**
