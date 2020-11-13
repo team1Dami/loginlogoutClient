@@ -2,6 +2,7 @@ package Implementation;
 
 import classes.Message;
 import classes.User;
+import exceptions.NoServerConnectionException;
 import interfaces.ClientServer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,23 +67,26 @@ public class ClientServerImplementation implements ClientServer {
     @Override
     public User signUp(User user) {
 
-        message.setUser(user);
-        message.setType(2);
-        ClientWorker hilo = new ClientWorker();
-        hilo.setMessage(message);
-        hilo.start();
         try {
+            message.setUser(user);
+            message.setType(2);
+            ClientWorker hilo = new ClientWorker();
+            hilo.setMessage(message);
+            hilo.start();
+
             hilo.join();
-        } catch (InterruptedException ex) {
+
+            message = hilo.getMessage();
+            if (message.getException() != null) {
+                user = null;
+                String error = exceptions();
+                Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
+                alert.showAndWait();
+                message.setException(null);
+            }
+        } 
+        catch (InterruptedException ex) {
             Logger.getLogger(ClientServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        message = hilo.getMessage();
-        if (message.getException() != null) {
-            user = null;
-            String error = exceptions();
-            Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
-            alert.showAndWait();
-            message.setException(null);
         }
         return user;
     }

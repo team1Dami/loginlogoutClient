@@ -1,14 +1,16 @@
 package ApplicationCliente.Controller;
 
-import Implementation.ClientServerImplementation;
+import Implementation.ImpFactory;
 import classes.User;
-import java.net.URL;
-import java.util.ResourceBundle;
+import exceptions.EmailFormatException;
+import exceptions.NoConnectionDBException;
+import exceptions.NoServerConnectionException;
+import exceptions.UserExistException;
+import interfaces.ClientServer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.fxml.Initializable;
 import javafx.stage.Stage;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -27,7 +29,7 @@ import javafx.stage.WindowEvent;
  *
  * @author saray
  */
-public class SignUpController implements Initializable {
+public class SignUpController {
 
     private static final Logger logger = Logger.getLogger("ApplicationClient.Controller.SignUpController");
 
@@ -75,61 +77,13 @@ public class SignUpController implements Initializable {
         stage.setTitle("Formulario de registro");
         stage.setResizable(false);
         stage.setOnShowing(this::handleWindowShowing);
-        tfFullName.textProperty().addListener(this::textChanged);
         tfFullName.setPromptText("Introduzca su nombre completo");
-        tfUser.textProperty().addListener(this::textChanged);
         tfUser.setPromptText("Introduzca un nombre de usuario");
-        tfEmail.textProperty().addListener(this::textChanged);
-        tfEmail.setPromptText("Introduzca su Email");
-        tfPasswd.textProperty().addListener(this::textChanged);
+        tfEmail.setPromptText("Introduzca un email: example@example.com");
         tfPasswd.setPromptText("Introduzca una contraseña");
-        tfPasswd2.textProperty().addListener(this::textChanged);
         tfPasswd2.setPromptText("Repita su contraseña");
-        btnCancel.setOnAction(this::handleButtonCancelarAction);
-        btnAccept.setDisable(true);
-        btnAccept.setOnAction(this::handleButtonAceptarAction);
+
         stage.show();
-    }
-
-    /**
-     * Method to initialize the view
-     *
-     * @param location
-     * @param resources
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        logger.info("Beginning initializing controller");
-    }
-
-    /**
-     * Method to control the changes on the text fields when the focus change If
-     * an error ocurr an alert advice the user of the error
-     *
-     * @param observable
-     * @param oldValue
-     * @param newValue
-     */
-    private void textChanged(ObservableValue observable,
-            String oldValue,
-            String newValue) {
-        logger.info("Checking changes in text fields");
-        Alert alert;
-        if (validateEmail(tfEmail.getText().toString())
-                && !tfFullName.getText().isEmpty()
-                && !tfUser.getText().isEmpty()
-                && !tfEmail.getText().isEmpty()
-                && !tfPasswd.getText().isEmpty()
-                && !tfPasswd2.getText().isEmpty()
-                && tfPasswd.getText().equals(tfPasswd2.getText())
-                && tfPasswd.getText().length() >= MIN_PASS_LENGHT
-                && tfPasswd.getText().length() <= MAX_PASS_LENGHT) {
-            btnAccept.setDisable(false);
-        } else {
-          //  alert = new Alert(Alert.AlertType.WARNING);
-            //  alert.showAndWait();
-            btnAccept.setDisable(true);
-        }
     }
 
     /**
@@ -138,7 +92,9 @@ public class SignUpController implements Initializable {
      * @param event
      */
     private void handleWindowShowing(WindowEvent event) {
-        btnAccept.setDisable(true);
+
+        btnCancel.setOnAction(this::handleButtonCancelarAction);
+        btnAccept.setOnAction(this::handleButtonAceptarAction);
     }
 
     /**
@@ -151,28 +107,88 @@ public class SignUpController implements Initializable {
      */
     @FXML
     private void handleButtonAceptarAction(ActionEvent event) {
-        User myUser;
-        try {
-            myUser = new User();
-            myUser.setFullname(tfFullName.getText().toString());
-            myUser.setLogIn(tfUser.getText().toString());
-            myUser.setEmail(tfEmail.getText().toString());
-            myUser.setPasswd(tfPasswd.getText().toString());
-            ClientServerImplementation imp = new ClientServerImplementation();
-            User serverUser = imp.signUp(myUser);
+        Alert alert;
 
-            if (null != serverUser) {
-                FXMLLoader loader
-                        = new FXMLLoader(getClass().getResource("Login.fxml"));
-                Parent root = (Parent) loader.load();
-                LoginController controller = ((LoginController) loader.getController());
-                controller = (loader.getController());
-                controller.setStage(stage);
-                controller.initStage(root);
+        if (!validateFields(tfUser.getText())) {
+            alert = new Alert(Alert.AlertType.WARNING, "El usuario no puede contener espacios en blanco", ButtonType.OK);
+            alert.showAndWait();
+        } 
+        else if (!validateFields(tfPasswd.getText())) {
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("La contraseña no puede contener espacios en blanco");
+            alert.showAndWait();
+        } 
+        else if (!validateFields(tfPasswd2.getText())) {
+            alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("La contraseña no puede contener espacios en blanco");
+            alert.showAndWait();
+        }
+        
+        else {
+            try {
+                User myUser;
+
+                myUser = new User();
+                myUser.setFullname(tfFullName.getText().toString());
+                myUser.setLogIn(tfUser.getText().toString());
+                myUser.setEmail(tfEmail.getText().toString());
+                myUser.setPasswd(tfPasswd.getText().toString());
+
+                ClientServer imp = ImpFactory.getImplement();
+                User serverUser = imp.signUp(myUser);
+
+                if (null != serverUser) {
+
+                    alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setContentText("Se ha registrado correctamente");
+                    alert.showAndWait();
+
+                    FXMLLoader loader
+                            = new FXMLLoader(getClass().getResource("Login.fxml"));
+                    Parent root = (Parent) loader.load();
+                    LoginController controller = ((LoginController) loader.getController());
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+
+                } else {
+
+                    alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("No se ha podido conectar con el servidor."
+                            + "\nInténtelo de nuevo más tarde.");
+                    alert.showAndWait();
+
+                    FXMLLoader loader
+                            = new FXMLLoader(getClass().getResource("Login.fxml"));
+                    Parent root = (Parent) loader.load();
+                    LoginController controller = ((LoginController) loader.getController());
+                    controller = (loader.getController());
+                    controller.setStage(stage);
+                    controller.initStage(root);
+                }
+
+            } catch (UserExistException e) {
+                Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, e);
+                alert = new Alert(Alert.AlertType.WARNING);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            } catch (NoServerConnectionException e) {
+                logger.log(Level.SEVERE, "No Server Connection", e.getMessage());
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            } catch (NoConnectionDBException e) {
+                logger.log(Level.SEVERE, "No DataBase Connection", e.getMessage());
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
+            } catch (Exception e) {
+                logger.log(Level.SEVERE, "User can not set", e.getMessage());
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("No se ha podido conectar con el servidor."
+                        + "\nInténtelo de nuevo más tarde.");
+                alert.showAndWait();
             }
-
-        } catch (Exception e) {
-            logger.log(Level.SEVERE, "User can not set", e.getMessage());
         }
     }
 
@@ -183,7 +199,8 @@ public class SignUpController implements Initializable {
      * @param event
      */
     @FXML
-    private void handleButtonCancelarAction(ActionEvent event) {
+    private void handleButtonCancelarAction(ActionEvent event
+    ) {
 
         try {
             FXMLLoader loader
@@ -198,25 +215,48 @@ public class SignUpController implements Initializable {
             logger.log(Level.SEVERE,
                     "UI LoginController: Error opening users managing window: {0}",
                     ex.getMessage());
-            Alert alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setContentText("No se ha podido cargar la ventana");
+            alert.showAndWait();
         }
     }
 
     /**
-     * Method to validate the email format
+     * Method to validate the email format throws a pattern
      *
-     * @param email
-     * @return true or false
+     * @param email type of object: String
+     * @return true if the email matches or false if its not
      */
-    private boolean validateEmail(String email) {
+    private boolean validateEmail(String email) throws EmailFormatException {
         // Patron para validar el email
-        Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+        try {
+            Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
-        Matcher mather = pattern.matcher(email);
-        if (!mather.find()) {
+            Matcher mather = pattern.matcher(email);
+            if (!mather.find()) {
+                throw new EmailFormatException(null);
+            } else {
+                return true;
+            }
+        } catch (EmailFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, e.getMessage(), ButtonType.OK);
+            alert.showAndWait();
+        }
+        return false;
+    }
+    /**
+     * Method to validate that the tfUser and the tfPassword doesn't contains white space
+     * @param text String that contains the value of tfUser or the value of tfPassword
+     * @return true if don't contains white space or returns false if contains white space
+     */
+    private boolean validateFields(String text) {
+
+        if (text.contains(" ")) {
+            System.out.println("No cumplo con las normas");
             return false;
         } else {
             return true;
         }
+
     }
 }

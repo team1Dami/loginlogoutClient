@@ -1,10 +1,13 @@
 package Implementation;
 
 import classes.Message;
+import exceptions.NoConnectionDBException;
+import exceptions.NoServerConnectionException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +24,7 @@ public class ClientWorker extends Thread {
     private static String HOST;
     private static int PORT;
     private Message message;
+    private boolean socketOutOfTime = false;
 
     /**
      * Set the message information to a local object Message
@@ -45,17 +49,21 @@ public class ClientWorker extends Thread {
         ObjectInputStream objectInputStream = null;
         try {
             socket = new Socket(HOST, PORT);
-
+            socket.setSoTimeout(10 * 1000);//timeout    
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectOutputStream.writeObject(message);
             logger.log(Level.INFO, "Mensaje{0}", message.getUser());
 
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             message = (Message) objectInputStream.readObject();
+            this.socketOutOfTime = true;
+        } catch (SocketTimeoutException ex) {
+            socketOutOfTime = true;
 
         } catch (IOException ex) {
             Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
-            message.setException(ex);
+            NoServerConnectionException noCon = new NoServerConnectionException(null);
+            message.setException(noCon);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
             message.setException(ex);
@@ -75,7 +83,8 @@ public class ClientWorker extends Thread {
                 }
             } catch (IOException ex) {
                 Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
-                message.setException(ex);
+                NoServerConnectionException noCon = new NoServerConnectionException(null);
+                message.setException(noCon);
             }
         }
     }
@@ -87,5 +96,15 @@ public class ClientWorker extends Thread {
      */
     public Message getMessage() {
         return message;
+    }
+    
+    /**
+     * Method to obtain is the socket of the client is out of time
+     * 
+     * @return true if the socket doesn't have connection with the server
+     * or return false if the socket have connection
+     */
+    public boolean getSocketOutOfTime() {
+        return this.socketOutOfTime;
     }
 }
