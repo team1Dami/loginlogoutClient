@@ -217,6 +217,7 @@ public class LoginController {
         } catch (IOException ex) {
             Logger.getLogger(LoginLogoutCliente.class.getName()).log(Level.SEVERE, null, ex);
             Alert alert = new Alert(Alert.AlertType.WARNING, "No se ha podido cargar la ventana", ButtonType.OK);
+            alert.showAndWait();
         }
     }
 }
