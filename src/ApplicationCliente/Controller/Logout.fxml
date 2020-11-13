@@ -13,7 +13,7 @@
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label snapToPixel="false" text="Bienvenido " />
+                  <Label fx:id ="txtWelcome" snapToPixel="false" text="Bienvenido " />
                </children>
             </HBox>
          </children>

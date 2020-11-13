@@ -4,7 +4,12 @@ import ApplicationCliente.LoginLogoutCliente;
 import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import classes.User;
+import exceptions.LoginNoExistException;
+import exceptions.NoConnectionDBException;
+import exceptions.NoServerConnectionException;
+import exceptions.PasswordErrorException;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
@@ -103,22 +108,46 @@ public class LoginController {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error", ButtonType.APPLY);
         } else {
             User myUser = new User();
-            myUser.setLogIn(tfLogin.getText().toString());
-            myUser.setPasswd(tfPasswd.getText().toString());
+            myUser.setLogIn(tfLogin.getText());
+            myUser.setPasswd(tfPasswd.getText());
             ClientServerImplementation imp = ImpFactory.getImplement();
             User serverUser = null;
-            serverUser = imp.signIn(myUser);
+            try {
+                serverUser = imp.signIn(myUser);
+            } catch (LoginNoExistException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (PasswordErrorException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoServerConnectionException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("No se ha podido conectar con el servidor. Inténtelo más tarde.");
+                alert.showAndWait();
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoConnectionDBException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ConnectException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            if (serverUser != null) {
+            if (serverUser.getPasswd() == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Contraseña incorrecta");
+                alert.showAndWait();
+                tfPasswd.requestFocus();
+            }
+            
+
+            if (serverUser.getPasswd() != null && serverUser.getLogIn() != null ) {
 
                 LogoutController controller = new LogoutController();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("Logout.fxml"));
                 Parent root;
+                controller.setMensaje(myUser);
 
                 try {
                     root = (Parent) loader.load();
                     controller = (loader.getController());
-                    controller.setStage(stage);
+                    controller.setStage(stage);                  
                     controller.initStage(root);
                 } catch (IOException ex) {
                     Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);

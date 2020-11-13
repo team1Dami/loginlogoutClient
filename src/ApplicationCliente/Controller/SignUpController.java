@@ -181,12 +181,11 @@ public class SignUpController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("Error la contraseña es menor de 6");
             alert.showAndWait();
-        }else if(tfPasswd.getText().length() > MAX_PASS_LENGHT){
+        } else if (tfPasswd.getText().length() > MAX_PASS_LENGHT) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("Error la contraseña es mayor de 12");
             alert.showAndWait();
-        }
-        else {
+        } else {
             contraseñaCorrecta = true;
         }
 
@@ -194,12 +193,11 @@ public class SignUpController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("Error la confirmacion de la contraseña es menor de 6");
             alert.showAndWait();
-        }else if (tfPasswd2.getText().length() > MAX_PASS_LENGHT) {
+        } else if (tfPasswd2.getText().length() > MAX_PASS_LENGHT) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setContentText("Error la confirmacion de la contraseña es mayor de 12");
             alert.showAndWait();
-        }
-        else {
+        } else {
             contraseña2Correcta = true;
         }
 
@@ -222,6 +220,9 @@ public class SignUpController implements Initializable {
                     controller = (loader.getController());
                     controller.setStage(stage);
                     controller.initStage(root);
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setContentText("Usuario registrado correctamente");
+                    alert.showAndWait();
                 }
 
             } catch (Exception e) {

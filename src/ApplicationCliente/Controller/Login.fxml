@@ -20,16 +20,16 @@
    <center>
       <VBox alignment="CENTER_LEFT" prefHeight="178.0" prefWidth="600.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="TOP_LEFT" contentDisplay="TOP" text="User">
+            <Label alignment="TOP_LEFT" contentDisplay="TOP" text="Nombre de usuario:">
                <VBox.margin>
                   <Insets left="100.0" />
                </VBox.margin></Label>
-            <TextField fx:id="tfLogin" alignment="TOP_LEFT" promptText="Nombre de usuario">
+            <TextField fx:id="tfLogin" alignment="TOP_LEFT" promptText="Introduzco su nombre de usuario">
                <VBox.margin>
                   <Insets bottom="25.0" left="100.0" right="100.0" />
                </VBox.margin>
             </TextField>
-            <Label text="Password">
+            <Label text="Contraseña:">
                <VBox.margin>
                   <Insets left="100.0" />
                </VBox.margin></Label>

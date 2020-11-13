@@ -1,13 +1,18 @@
 package Implementation;
 
 import classes.Message;
+import classes.User;
+import exceptions.NoServerConnectionException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Alert;
 
 /**
  * The class of the client thread
@@ -20,7 +25,7 @@ public class ClientWorker extends Thread {
     private static final ResourceBundle clientFile = ResourceBundle.getBundle("ApplicationClient.Properties/Client");
     private static String HOST;
     private static int PORT;
-    private Message message;
+    private static Message message;
 
     /**
      * Set the message information to a local object Message
@@ -45,6 +50,7 @@ public class ClientWorker extends Thread {
         ObjectInputStream objectInputStream = null;
         try {
             socket = new Socket(HOST, PORT);
+            socket.setSoTimeout(10000);
 
             objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             objectOutputStream.writeObject(message);
@@ -53,11 +59,17 @@ public class ClientWorker extends Thread {
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             message = (Message) objectInputStream.readObject();
 
-        } catch (IOException ex) {
+        } catch (ConnectException ex) {
             Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
-            message.setException(ex);
-        } catch (ClassNotFoundException ex) {
+            message.setUser(null);
+            message.setException(new NoServerConnectionException(null));
+        } catch (SocketException ex) {
             Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
+            message.setUser(null);
+            message.setException(new NoServerConnectionException(null));
+        } catch (IOException | ClassNotFoundException ex) {
+            Logger.getLogger(ClientWorker.class.getName()).log(Level.SEVERE, null, ex);
+            message.setUser(null);
             message.setException(ex);
         } finally {
             if (objectOutputStream != null) {
@@ -85,7 +97,7 @@ public class ClientWorker extends Thread {
      *
      * @return a class Message
      */
-    public Message getMessage() {
+    public static Message getMessage() {
         return message;
     }
 }

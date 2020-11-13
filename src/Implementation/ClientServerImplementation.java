@@ -2,7 +2,12 @@ package Implementation;
 
 import classes.Message;
 import classes.User;
+import exceptions.LoginNoExistException;
+import exceptions.NoConnectionDBException;
+import exceptions.NoServerConnectionException;
+import exceptions.PasswordErrorException;
 import interfaces.ClientServer;
+import java.net.ConnectException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Alert;
@@ -26,9 +31,14 @@ public class ClientServerImplementation implements ClientServer {
      *
      * @param user
      * @return Object class User
+     * @throws exceptions.LoginNoExistException
+     * @throws exceptions.PasswordErrorException
+     * @throws java.net.ConnectException
+     * @throws exceptions.NoServerConnectionException
+     * @throws exceptions.NoConnectionDBException
      */
     @Override
-    public User signIn(User user) {
+    public User signIn(User user) throws LoginNoExistException, PasswordErrorException, ConnectException, NoServerConnectionException, NoConnectionDBException {
         userPrueba = user;
         message.setUser(user);
 
@@ -44,14 +54,19 @@ public class ClientServerImplementation implements ClientServer {
         message = hilo.getMessage();
 
         user = message.getUser();
+        if(message.getException()!=null){
+            if(message.getException().equalsIgnoreCase("NoServerCon"))
+                throw new NoServerConnectionException(null);
+        }
         this.login = user.getLogIn();
-        if (message.getException() != null) {
+        /*if (message.getException() != null) {
             user = null;
             String error = exceptions();
             Alert alert = new Alert(Alert.AlertType.ERROR, error, ButtonType.OK);
             alert.showAndWait();
             message.setException(null);
-        }
+        }*/
+        
         return user;
     }
 
