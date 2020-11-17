@@ -40,10 +40,11 @@ public class SignUpControllerTest extends ApplicationTest {
      */
     @Override
     public void start(Stage stage) throws Exception {
-        //new LoginLogoutCliente().start(stage);
-
+        new LoginLogoutCliente().start(stage);
+        clickOn("#btnRegister");
+           /*
         SignUpController controller = new SignUpController();
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("../ApplicationCliente/Controller/SignUp.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ApplicationCliente/Controller/SignUp.fxml"));
         Parent root;
         try {
             root = (Parent) loader.load();
@@ -53,6 +54,7 @@ public class SignUpControllerTest extends ApplicationTest {
         } catch (IOException ex) {
             Logger.getLogger(LoginLogoutCliente.class.getName()).log(Level.SEVERE, null, ex);
         }
+        */
     }
 
     /**

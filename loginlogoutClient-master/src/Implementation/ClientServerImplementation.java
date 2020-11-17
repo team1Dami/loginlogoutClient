@@ -87,7 +87,7 @@ public class ClientServerImplementation implements ClientServer {
         if (message.getException() != null) {
             user = null;
             String error = exceptions();
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido algun error, verifique otra vez si todo esta correcto ", ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Ha ocurrido algun error con el servidor, intentelo mas tarde ", ButtonType.OK);
             alert.showAndWait();
             message.setException(null);
         }

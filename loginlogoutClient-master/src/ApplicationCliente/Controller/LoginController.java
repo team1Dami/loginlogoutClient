@@ -5,6 +5,7 @@ import Implementation.ClientServerImplementation;
 import Implementation.ImpFactory;
 import classes.User;
 import exceptions.LoginNoExistException;
+import exceptions.NoConnectionDBException;
 import exceptions.NoServerConnectionException;
 import exceptions.PasswordErrorException;
 import interfaces.ClientServer;
@@ -102,33 +103,42 @@ public class LoginController {
      *
      * @param event
      */
-    private void handleButtonLogin(ActionEvent event) {
+    private void handleButtonLogin(ActionEvent event){
         if (tfLogin.getText().isEmpty() || tfPasswd.getText().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Error", ButtonType.APPLY);
         } else {
-            User myUser = new User();
-            myUser.setLogIn(tfLogin.getText().toString());
-            myUser.setPasswd(tfPasswd.getText().toString());
-            ClientServer imp = ImpFactory.getImplement();
-            User serverUser = null;
-            //serverUser = imp.signIn(myUser);
-
-            if (serverUser != null) {
-
-                LogoutController controller = new LogoutController();
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("Logout.fxml"));
-                Parent root;
-
-                try {
-                    root = (Parent) loader.load();
-                    controller = (loader.getController());
-                    controller.setStage(stage);
-                    controller.initStage(root);
-                } catch (IOException ex) {
-                    Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                User myUser = new User();
+                myUser.setLogIn(tfLogin.getText().toString());
+                myUser.setPasswd(tfPasswd.getText().toString());
+                ClientServer imp = ImpFactory.getImplement();
+                User serverUser = null;
+                serverUser = imp.signIn(myUser);
+                
+                if (serverUser != null) {
+                    
+                    LogoutController controller = new LogoutController();
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("Logout.fxml"));
+                    Parent root;
+                    
+                        root = (Parent) loader.load();
+                        controller = (loader.getController());
+                        controller.setStage(stage);
+                        controller.initStage(root);
+                    
+                } else {
+                    logger.info("User null");
                 }
-            } else {
-                logger.info("User null");
+            } catch (PasswordErrorException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoServerConnectionException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (LoginNoExistException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NoConnectionDBException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            }catch (IOException ex) {
+                 Logger.getLogger(LogoutController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

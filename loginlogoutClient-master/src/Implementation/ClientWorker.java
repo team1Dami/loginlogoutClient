@@ -54,7 +54,7 @@ public class ClientWorker extends Thread {
             objectInputStream = new ObjectInputStream(socket.getInputStream());
             message = (Message) objectInputStream.readObject();
             this.socketOutOfTime = false;
-        }catch (SocketTimeoutException ex) {
+        }catch (SocketTimeoutException ex){
                 ///
                 socketOutOfTime = true;
         }catch (IOException ex) {
